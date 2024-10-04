@@ -9,7 +9,7 @@ Você pode instalar a versão de desenvolvimento do regressao como:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("usuario/regressao")
+devtools::install_github("caua-masseu/regressao")
 ```
 
 ## Funcionalidades
