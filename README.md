@@ -8,7 +8,7 @@ regressao é um pacote R desenvolvido para facilitar o ajuste de modelos de regr
 Você pode instalar a versão de desenvolvimento do regressao como:
 
 ``` r
-# install.packages("devtools")
+install.packages("devtools")
 devtools::install_github("caua-masseu/regressao")
 ```
 
@@ -16,7 +16,7 @@ devtools::install_github("caua-masseu/regressao")
 
 - **`regressao_linear()`**: Ajusta um modelo de regressão linear simples ou ridge. Retorna os coeficientes, resíduos, valores preditos e um gráfico de valores observados vs. preditos.
 - **`analise_residuos()`**: Gera gráficos para análise dos resíduos de um modelo de regressão.
-
+-**`predicao()`**: Faz previsões utilizando um modelo de regressão previamente ajustado.
 
 ## Exemplos
 
