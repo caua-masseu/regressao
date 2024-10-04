@@ -1,3 +1,4 @@
+
 ```{r, include = FALSE, echo = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -8,9 +9,6 @@ knitr::opts_chunk$set(
 ```
 
 # regressao
-
-<!-- badges: start -->
-<!-- badges: end -->
 
 regressao é um pacote R desenvolvido para facilitar o ajuste de modelos de regressão linear e ridge, bem como realizar análises estatísticas dos resíduos dos modelos. Ele inclui funções para ajustar modelos de regressão, gerar predições e analisar a qualidade do ajuste por meio de gráficos de resíduos. Além disso, um conjunto de dados de exemplo é fornecido para que os usuários possam testar e explorar as funcionalidades do pacote.
 
