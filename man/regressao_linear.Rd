@@ -14,24 +14,34 @@ regressao_linear(
 )
 }
 \arguments{
-\item{X}{Uma matriz de variáveis preditoras (apenas valores numéricos)}
+\item{X}{Uma matriz de variáveis preditoras (apenas valores numéricos).}
 
-\item{Y}{Um vetor da variável resposta}
+\item{Y}{Um vetor da variável resposta.}
 
-\item{type}{Tipo de modelo a ser ajustado: "lm" para regressão linear simples ou "ridge" para regressão ridge. (default é "lm")
-caso seja ridge, há uma normalização nos dados, ou seja, subtrai o desvio padrão e divide pela média.}
+\item{type}{Tipo de modelo a ser ajustado: "lm" para regressão linear simples ou "ridge"
+para regressão ridge. O valor padrão é "lm".}
 
-\item{lambda}{Parâmetro de penalização para regressão ridge (default é 0.5).}
+\item{lambda}{Parâmetro de penalização para a regressão ridge. O valor padrão é 0.5.}
 
-\item{nivel_confianca}{nível de significancia a ser utilizado no cálculo do intervalo de confiança (default = 0.95).}
+\item{intercepto}{Lógica indicando se deve ser adicionado um intercepto à matriz X.
+TRUE para incluir o intercepto, FALSE caso contrário (padrão é TRUE).}
 
-\item{Intercepto}{TRUE para adicionar o intercepto a matriz X, FALSE, caso contrário (default = TRUE)}
+\item{nivel_confianca}{Nível de significância a ser utilizado no cálculo do intervalo de
+confiança para os coeficientes. O padrão é 0.95.}
 }
 \value{
-Uma lista contendo os coeficientes, resíduos, valores preditos, um gráfico de valores preditos vs observados e o intervalo de confiança dos coeficientes calculados.
+Uma lista contendo:
+\item{coeficientes}{Coeficientes estimados do modelo.}
+\item{residuos}{Resíduos do ajuste.}
+\item{valores_preditos}{Valores preditos pelo modelo.}
+\item{obs_vs_pred}{Gráfico de valores preditos vs. valores observados.}
+\item{IC}{Intervalo de confiança dos coeficientes calculados.}
+\item{R2}{Coeficiente de determinação do modelo.}
+\item{teste_F}{Resultados do teste F, incluindo estatística F e valor p.}
 }
 \description{
-Ajustar um modelo de regressão linear
+Esta função ajusta um modelo de regressão linear ou ridge a um conjunto de dados, permitindo a
+análise e previsão de uma variável resposta com base em variáveis preditoras.
 }
 \examples{
 # Criar a matriz de preditores e vetor de respostas
@@ -45,6 +55,8 @@ modelo_lm <- regressao_linear(X, Y, type = "lm", intercepto = TRUE)
 modelo_ridge <- regressao_linear(X, Y, type = "ridge", lambda = 0.5)
 
 # Exibir os coeficientes
-print("Coeficientes do modelo linear:", modelo_lm$coeficientes)
-print("Coeficientes do modelo ridge:", modelo_ridge$coeficientes)
+print("Coeficientes do modelo linear:")
+print(modelo_lm$coeficientes)
+print("Coeficientes do modelo ridge:")
+print(modelo_ridge$coeficientes)
 }

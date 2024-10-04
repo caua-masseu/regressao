@@ -4,7 +4,7 @@
 \alias{predicao}
 \title{Predizer novos valores usando um modelo de regressão ajustado}
 \usage{
-predicao(modelo, X_novo, intercepto = TRUE)
+predicao(modelo, X_novo)
 }
 \arguments{
 \item{modelo}{Uma lista contendo os resultados do modelo ajustado, como os coeficientes.

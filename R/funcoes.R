@@ -42,9 +42,15 @@
 #' @export
 regressao_linear <- function(X, Y, type = "lm", lambda = 0.5, intercepto = TRUE, nivel_confianca = 0.95) {
 
-  stopifnot(is.matrix(X), is.numeric(X), is.numeric(Y), nrow(X) == length(Y))
-  stopifnot(is.vector(Y) && length(dim(Y)) <= 1)
-
+  if (!is.matrix(X) || !is.numeric(X) || !is.numeric(Y)) {
+    stop("X deve ser uma matriz numérica e Y deve ser um vetor numérico.")
+  }
+  if (nrow(X) != length(Y)) {
+    stop("O número de linhas em X deve ser igual ao comprimento de Y.")
+  }
+  if (!is.vector(Y) || length(dim(Y)) > 1) {
+    stop("Y deve ser um vetor unidimensional.")
+  }
   if (nrow(X) == 0 || ncol(X) == 0) {
     stop("X não pode ser vazio.")
   }
@@ -54,14 +60,15 @@ regressao_linear <- function(X, Y, type = "lm", lambda = 0.5, intercepto = TRUE,
   if (ncol(X) < 1) {
     stop("X deve ter pelo menos uma coluna de preditores.")
   }
+  # if(rank(X) != ncol(X)){
+  #  stop("X deve ter posto completo")
+  # }
 
-  if (intercepto) {
+  if(intercepto){
     X <- cbind(1, X)
   }
-
   if (type == "lm") {
-    qr_fit <- qr(X)
-    coeficientes <- backsolve(qr.R(qr_fit), qr.qy(qr_fit, Y))
+    coeficientes <- solve(t(X) %*% X) %*% t(X) %*% Y
   } else if (type == "ridge") {
     coeficientes <- solve(t(X) %*% X + lambda * diag(ncol(X))) %*% t(X) %*% Y
   } else {
@@ -71,7 +78,7 @@ regressao_linear <- function(X, Y, type = "lm", lambda = 0.5, intercepto = TRUE,
   Y_pred <- X %*% coeficientes
   residuos <- Y - Y_pred
 
-  grafico_observado_vs_predito <- ggplot2::ggplot(data = data.frame(Y, Y_pred), aes(x = Y, y = Y_pred)) +
+  grafico_observado_vs_predito <- ggplot2::ggplot(data = data.frame(Y, Y_pred), ggplot2::aes(x = Y, y = Y_pred)) +
     ggplot2::geom_point(color = "blue") + ggplot2::labs(title = "Observado vs Predito", x = "Valores Observados", y = "Valores Preditos")
 
   SSE <- sum(residuos^2)
@@ -127,14 +134,13 @@ regressao_linear <- function(X, Y, type = "lm", lambda = 0.5, intercepto = TRUE,
 #'
 #' @export
 predicao <- function(modelo, X_novo) {
-
   if (!is.list(modelo) || !all(c("coeficientes") %in% names(modelo))) {
     stop("O argumento 'modelo' deve ser uma lista resultante da função 'regressao_linear'.")
   }
   if (!is.matrix(X_novo) || !is.numeric(X_novo)) {
     stop("X_novo deve ser uma matriz numérica.")
   }
-  if (ncol(X_novo) + as.numeric(intercepto) != length(modelo$coeficientes)) {
+  if (ncol(X_novo) + as.numeric(modelo$intercepto) != length(modelo$coeficientes)) {
     stop("O número de colunas em X_novo deve ser compatível com os coeficientes do modelo.")
   }
 
@@ -185,9 +191,8 @@ predicao <- function(modelo, X_novo) {
 #' print(graficos_resultados$grafico_acf_residuos)
 #' @export
 analise_residuos <- function(resultados) {
-  # Verifica se a entrada é uma lista
   if (!is.list(resultados)) {
-    stop("resultados deve ser uma lista contendo coeficientes, resíduos e valores preditos.")
+    stop("resultados deve ser uma lista como resultado da funcao regressao linear.")
   }
 
   # Extrai os componentes da lista
@@ -198,7 +203,7 @@ analise_residuos <- function(resultados) {
   graficos <- list()
 
   # Gráfico de Resíduos vs Valores Ajustados
-  graficos$grafico_res_ajustados <- ggplot2::ggplot(data = data.frame(Y_pred, residuos), aes(x = Y_pred, y = residuos)) +
+  graficos$grafico_res_ajustados <- ggplot2::ggplot(data = data.frame(Y_pred, residuos), ggplot2::aes(x = Y_pred, y = residuos)) +
     ggplot2::geom_point() +
     ggplot2::geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
     ggplot2::labs(title = "Gráfico de Resíduos vs. Ajustados",
@@ -207,14 +212,14 @@ analise_residuos <- function(resultados) {
     ggplot2::theme_bw()
 
   # Histograma dos Resíduos
-  graficos$grafico_histograma_res <- ggplot2::ggplot(data = data.frame(residuos), aes(x = residuos)) +
+  graficos$grafico_histograma_res <- ggplot2::ggplot(data = data.frame(residuos), ggplot2::aes(x = residuos)) +
     ggplot2::geom_histogram(binwidth = 0.5, color = "black", fill = "blue") +
     ggplot2::labs(title = "Histograma dos Resíduos",
                   x = "Resíduos") +
     ggplot2::theme_bw()
 
   # Gráfico Q-Q dos Resíduos
-  graficos$grafico_qq_res <- ggplot2::ggplot(data = data.frame(residuos), aes(sample = residuos)) +
+  graficos$grafico_qq_res <- ggplot2::ggplot(data = data.frame(residuos), ggplot2::aes(sample = residuos)) +
     ggplot2::stat_qq() +
     ggplot2::stat_qq_line(color = "red") +
     ggplot2::labs(title = "Gráfico Q-Q da Normalidade dos Resíduos") +
@@ -232,7 +237,7 @@ analise_residuos <- function(resultados) {
   ci_upper <- 1.96 / sqrt(n)
   ci_lower <- -1.96 / sqrt(n)
 
-  graficos$grafico_acf_residuos <- ggplot2::ggplot(acf_df, aes(x = Lag, y = ACF)) +
+  graficos$grafico_acf_residuos <- ggplot2::ggplot(acf_df, ggplot2::aes(x = Lag, y = ACF)) +
     ggplot2::geom_bar(stat = "identity", fill = "blue", color = "black", width = 0.7) +
     ggplot2::labs(title = "Autocorrelação dos Resíduos",
                   x = "Lag",

@@ -18,11 +18,11 @@ Deve incluir:
 \value{
 Uma lista de gráficos gerados, contendo:
 \itemize{
-  \item \code{grafico_residuos_ajustados}: gráfico de resíduos vs. valores ajustados.
+  \item \code{grafico_res_ajustados}: gráfico de resíduos vs. valores ajustados.
   \item \code{grafico_histograma_res}: histograma dos resíduos.
   \item \code{grafico_qq_res}: gráfico Q-Q dos resíduos.
   \item \code{grafico_acf_residuos}: gráfico de autocorrelação dos resíduos.
-  \item \code{shapiro_wilks}: teste de hipótese do shapiro wilks para testar a normalidade dos resíduos.
+  \item \code{shapiro_wilks}: resultado do teste de Shapiro-Wilk para testar a normalidade dos resíduos.
 }
 }
 \description{
