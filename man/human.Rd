@@ -7,17 +7,17 @@
 \format{
 Um data frame com 100 observações e 7 variáveis:
 \describe{
-\item{idade}{Idade do indivíduo (numérico, entre 18 e 65).}
-\item{renda_anual}{Renda anual do indivíduo (numérico, distribuído conforme uma distribuição gamma).}
-\item{ocupacao}{Tipo de ocupação do indivíduo (categórico: "Empregado", "Desempregado", "Autônomo").}
-\item{sexo}{Sexo do indivíduo (categórico: "Homem", "Mulher").}
-\item{altura}{Altura do indivíduo em centímetros (numérico, distribuído normalmente).}
-\item{anos_exp}{Anos de experiência do indivíduo (numérico, valor entre 0 e 17).}
-\item{satisfacao}{Nível de satisfação do indivíduo (numérico, varia de 0 a 10).}
+  \item{idade}{Idade do indivíduo (numérico, entre 18 e 65).}
+  \item{renda_anual}{Renda anual do indivíduo (numérico, distribuído conforme uma distribuição gamma).}
+  \item{ocupacao}{Tipo de ocupação do indivíduo (categórico: "Empregado", "Desempregado", "Autônomo").}
+  \item{sexo}{Sexo do indivíduo (categórico: "Homem", "Mulher").}
+  \item{altura}{Altura do indivíduo em centímetros (numérico, distribuído normalmente).}
+  \item{anos_exp}{Anos de experiência do indivíduo (numérico, valor entre 0 e 17).}
+  \item{satisfacao}{Nível de satisfação do indivíduo (numérico, varia de 0 a 10).}
 }
 }
 \source{
-Arquivo gerado aleatoriamente com a função \code{sample}, \code{rgamma} e \code{rnorm}.
+Arquivo gerado aleatoriamente com a função `sample`, `rgamma` e `rnorm`.
 }
 \usage{
 human

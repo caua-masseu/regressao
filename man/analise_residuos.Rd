@@ -10,18 +10,19 @@ analise_residuos(resultados)
 \item{resultados}{Uma lista contendo os resultados do ajuste do modelo.
 Deve incluir:
 \itemize{
-\item \code{coeficientes}: vetor de coeficientes do modelo.
-\item \code{residuos}: vetor de resíduos do modelo.
-\item \code{valores_preditos}: vetor de valores preditos pelo modelo.
+  \item \code{coeficientes}: vetor de coeficientes do modelo.
+  \item \code{residuos}: vetor de resíduos do modelo.
+  \item \code{valores_preditos}: vetor de valores preditos pelo modelo.
 }}
 }
 \value{
 Uma lista de gráficos gerados, contendo:
 \itemize{
-\item \code{grafico_residuos_ajustados}: gráfico de resíduos vs. valores ajustados.
-\item \code{grafico_histograma_res}: histograma dos resíduos.
-\item \code{grafico_qq_res}: gráfico Q-Q dos resíduos.
-\item \code{grafico_acf_residuos}: gráfico de autocorrelação dos resíduos.
+  \item \code{grafico_residuos_ajustados}: gráfico de resíduos vs. valores ajustados.
+  \item \code{grafico_histograma_res}: histograma dos resíduos.
+  \item \code{grafico_qq_res}: gráfico Q-Q dos resíduos.
+  \item \code{grafico_acf_residuos}: gráfico de autocorrelação dos resíduos.
+  \item \code{shapiro_wilks}: teste de hipótese do shapiro wilks para testar a normalidade dos resíduos.
 }
 }
 \description{
@@ -32,9 +33,14 @@ dos resíduos.
 }
 \examples{
 # Ajustar o modelo
-resultado <- ajustar_regressao_linear(X, Y)
+resultado <- regressao_linear(X, Y)
 
 # Analisar os resíduos
 graficos_resultados <- analise_residuos(resultado)
 
+# Exibir gráficos dos resíduos
+print(graficos_resultados$grafico_res_ajustados)
+print(graficos_resultados$grafico_histograma_res)
+print(graficos_resultados$grafico_qq_res)
+print(graficos_resultados$grafico_acf_residuos)
 }

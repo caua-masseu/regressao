@@ -4,10 +4,17 @@
 \alias{regressao_linear}
 \title{Ajustar um modelo de regressão linear}
 \usage{
-regressao_linear(X, Y, type = "lm", lambda = 0.5)
+regressao_linear(
+  X,
+  Y,
+  type = "lm",
+  lambda = 0.5,
+  intercepto = TRUE,
+  nivel_confianca = 0.95
+)
 }
 \arguments{
-\item{X}{Uma matriz de variáveis preditoras (incluindo intercepto)}
+\item{X}{Uma matriz de variáveis preditoras (apenas valores numéricos)}
 
 \item{Y}{Um vetor da variável resposta}
 
@@ -15,28 +22,29 @@ regressao_linear(X, Y, type = "lm", lambda = 0.5)
 caso seja ridge, há uma normalização nos dados, ou seja, subtrai o desvio padrão e divide pela média.}
 
 \item{lambda}{Parâmetro de penalização para regressão ridge (default é 0.5).}
+
+\item{nivel_confianca}{nível de significancia a ser utilizado no cálculo do intervalo de confiança (default = 0.95).}
+
+\item{Intercepto}{TRUE para adicionar o intercepto a matriz X, FALSE, caso contrário (default = TRUE)}
 }
 \value{
-Uma lista contendo os coeficientes, resíduos, valores preditos e um gráfico.
+Uma lista contendo os coeficientes, resíduos, valores preditos, um gráfico de valores preditos vs observados e o intervalo de confiança dos coeficientes calculados.
 }
 \description{
 Ajustar um modelo de regressão linear
 }
 \examples{
 # Criar a matriz de preditores e vetor de respostas
-X <- as.matrix(dados[, c("idade", "renda_anual", "altura", "anos_exp")])
-X <- cbind(1, X)  # Adiciona uma coluna de 1 para o intercepto
+X <- as.matrix(human[, c("idade", "renda_anual", "altura", "anos_exp")])
 Y <- dados$satisfacao
 
 # Ajustar um modelo de regressão linear
-modelo_lm <- regressao_linear(X, Y, type = "lm")
+modelo_lm <- regressao_linear(X, Y, type = "lm", intercepto = TRUE)
 
 # Ajustar um modelo de regressão ridge
 modelo_ridge <- regressao_linear(X, Y, type = "ridge", lambda = 0.5)
 
 # Exibir os coeficientes
-print("Coeficientes do modelo linear:")
-print(modelo_lm$coeficientes)
-print("Coeficientes do modelo ridge:")
-print(modelo_ridge$coeficientes)
+print("Coeficientes do modelo linear:", modelo_lm$coeficientes)
+print("Coeficientes do modelo ridge:", modelo_ridge$coeficientes)
 }

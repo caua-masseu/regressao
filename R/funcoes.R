@@ -25,16 +25,10 @@
 #' print("Coeficientes do modelo ridge:", modelo_ridge$coeficientes)
 #' @export
 regressao_linear <- function(X, Y, type = "lm", lambda = 0.5, intercepto = TRUE, nivel_confianca = 0.95) {
-  # Validação das entradas
-  if (!is.matrix(X) || !is.numeric(X) || !is.numeric(Y)) {
-    stop("X deve ser uma matriz numérica e Y deve ser um vetor numérico.")
-  }
-  if (nrow(X) != length(Y)) {
-    stop("O número de linhas em X deve ser igual ao comprimento de Y.")
-  }
-  if (!is.vector(Y) || length(dim(Y)) > 1) {
-    stop("Y deve ser um vetor unidimensional.")
-  }
+
+  stopifnot(is.matrix(X), is.numeric(X), is.numeric(Y), nrow(X) == length(Y))
+  stopifnot(is.vector(Y) && length(dim(Y)) <= 1)
+
   if (nrow(X) == 0 || ncol(X) == 0) {
     stop("X não pode ser vazio.")
   }
@@ -44,23 +38,35 @@ regressao_linear <- function(X, Y, type = "lm", lambda = 0.5, intercepto = TRUE,
   if (ncol(X) < 1) {
     stop("X deve ter pelo menos uma coluna de preditores.")
   }
-  if(intercepto){
+
+  if (intercepto) {
     X <- cbind(1, X)
   }
-  if(type == "lm"){
-    coeficientes <- solve(t(X) %*% X) %*% t(X) %*% Y    #Podemos utilziar fatoracao QR para resolver essa inversa
-  }else if(type == "ridge"){
-    coeficientes <- solve(t(X) %*% X + lambda*diag(ncol(X))) %*% t(X) %*% Y
+
+  if (type == "lm") {
+    qr_fit <- qr(X)
+    coeficientes <- backsolve(qr.R(qr_fit), qr.qy(qr_fit, Y))
+  } else if (type == "ridge") {
+    coeficientes <- solve(t(X) %*% X + lambda * diag(ncol(X))) %*% t(X) %*% Y
+  } else {
+    stop("Tipo de modelo não reconhecido. Use 'lm' ou 'ridge'.")
   }
+
+
   Y_pred <- X %*% coeficientes
   residuos <- Y - Y_pred
+
   grafico_observado_vs_predito <- ggplot(data = data.frame(Y, Y_pred), aes(x = Y, y = Y_pred)) +
-  geom_point(color = "blue") + labs(title = "Observado vs Predito",
-         x = "Valores Observados", y = "Valores Preditos")
+    geom_point(color = "blue") +
+    labs(title = "Observado vs Predito", x = "Valores Observados", y = "Valores Preditos")
+
+  SSE <- sum(residuos^2)
+  SST <- sum((Y - mean(Y))^2)
+  R2 <- 1 - (SSE / SST)
 
   n <- nrow(X)
   p <- ncol(X)
-  sigma2 <- sum(residuos^2) / (n - p)
+  sigma2 <- SSE / (n - p)
   var_beta <- sigma2 * solve(t(X) %*% X)
   erro_padrao <- sqrt(diag(var_beta))
 
@@ -69,14 +75,23 @@ regressao_linear <- function(X, Y, type = "lm", lambda = 0.5, intercepto = TRUE,
 
   limite_inferior <- coeficientes - t_critico * erro_padrao
   limite_superior <- coeficientes + t_critico * erro_padrao
-  intervalo_confianca <- cbind(limite_inferior, limite_superior)
-  colnames(intervalo_confianca) <- c("Limite Inferior", "Limite Superior")
+  intervalo_confianca <- cbind(coeficientes, limite_inferior, limite_superior)
+  colnames(intervalo_confianca) <- c("Coeficientes", "Limite Inferior", "Limite Superior")
+
+  F_estatistica <- ((SST - SSE) / (p - 1)) / (SSE / (n - p))
+  valor_p <- 1 - pf(F_estatistica, df1 = p - 1, df2 = n - p)
+
+  teste_F_resultado <- list(F_estatistica = F_estatistica, valor_p = valor_p)
 
   return(list(coeficientes = coeficientes,
               residuos = residuos,
               valores_preditos = Y_pred,
-              obs_vs_pred = grafico_observado_vs_predito, IC = intervalo_confianca))
+              obs_vs_pred = grafico_observado_vs_predito,
+              IC = intervalo_confianca,
+              R2 = R2,
+              teste_F = teste_F_resultado))
 }
+
 
 #' Predizer novos valores usando um modelo de regressão ajustado
 #'
