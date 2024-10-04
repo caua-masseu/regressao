@@ -1,13 +1,27 @@
 #' Ajustar um modelo de regressão linear
 #'
-#' @param X Uma matriz de variáveis preditoras (apenas valores numéricos)
-#' @param Y Um vetor da variável resposta
-#' @param type Tipo de modelo a ser ajustado: "lm" para regressão linear simples ou "ridge" para regressão ridge. (default é "lm")
-#' caso seja ridge, há uma normalização nos dados, ou seja, subtrai o desvio padrão e divide pela média.
-#' @param lambda Parâmetro de penalização para regressão ridge (default é 0.5).
-#' @param Intercepto TRUE para adicionar o intercepto a matriz X, FALSE, caso contrário (default = TRUE)
-#' @param nivel_confianca nível de significancia a ser utilizado no cálculo do intervalo de confiança (default = 0.95).
-#' @return Uma lista contendo os coeficientes, resíduos, valores preditos, um gráfico de valores preditos vs observados e o intervalo de confiança dos coeficientes calculados.
+#' Esta função ajusta um modelo de regressão linear ou ridge a um conjunto de dados, permitindo a
+#' análise e previsão de uma variável resposta com base em variáveis preditoras.
+#'
+#' @param X Uma matriz de variáveis preditoras (apenas valores numéricos).
+#' @param Y Um vetor da variável resposta.
+#' @param type Tipo de modelo a ser ajustado: "lm" para regressão linear simples ou "ridge"
+#' para regressão ridge. O valor padrão é "lm".
+#' @param lambda Parâmetro de penalização para a regressão ridge. O valor padrão é 0.5.
+#' @param intercepto Lógica indicando se deve ser adicionado um intercepto à matriz X.
+#' TRUE para incluir o intercepto, FALSE caso contrário (padrão é TRUE).
+#' @param nivel_confianca Nível de significância a ser utilizado no cálculo do intervalo de
+#' confiança para os coeficientes. O padrão é 0.95.
+#'
+#' @return Uma lista contendo:
+#' \item{coeficientes}{Coeficientes estimados do modelo.}
+#' \item{residuos}{Resíduos do ajuste.}
+#' \item{valores_preditos}{Valores preditos pelo modelo.}
+#' \item{obs_vs_pred}{Gráfico de valores preditos vs. valores observados.}
+#' \item{IC}{Intervalo de confiança dos coeficientes calculados.}
+#' \item{R2}{Coeficiente de determinação do modelo.}
+#' \item{teste_F}{Resultados do teste F, incluindo estatística F e valor p.}
+#'
 #' @importFrom ggplot2 ggplot geom_point labs
 #' @examples
 #' # Criar a matriz de preditores e vetor de respostas
@@ -21,8 +35,10 @@
 #' modelo_ridge <- regressao_linear(X, Y, type = "ridge", lambda = 0.5)
 #'
 #' # Exibir os coeficientes
-#' print("Coeficientes do modelo linear:", modelo_lm$coeficientes)
-#' print("Coeficientes do modelo ridge:", modelo_ridge$coeficientes)
+#' print("Coeficientes do modelo linear:")
+#' print(modelo_lm$coeficientes)
+#' print("Coeficientes do modelo ridge:")
+#' print(modelo_ridge$coeficientes)
 #' @export
 regressao_linear <- function(X, Y, type = "lm", lambda = 0.5, intercepto = TRUE, nivel_confianca = 0.95) {
 
@@ -52,13 +68,11 @@ regressao_linear <- function(X, Y, type = "lm", lambda = 0.5, intercepto = TRUE,
     stop("Tipo de modelo não reconhecido. Use 'lm' ou 'ridge'.")
   }
 
-
   Y_pred <- X %*% coeficientes
   residuos <- Y - Y_pred
 
-  grafico_observado_vs_predito <- ggplot(data = data.frame(Y, Y_pred), aes(x = Y, y = Y_pred)) +
-    geom_point(color = "blue") +
-    labs(title = "Observado vs Predito", x = "Valores Observados", y = "Valores Preditos")
+  grafico_observado_vs_predito <- ggplot2::ggplot(data = data.frame(Y, Y_pred), aes(x = Y, y = Y_pred)) +
+    ggplot2::geom_point(color = "blue") + ggplot2::labs(title = "Observado vs Predito", x = "Valores Observados", y = "Valores Preditos")
 
   SSE <- sum(residuos^2)
   SST <- sum((Y - mean(Y))^2)
@@ -89,7 +103,7 @@ regressao_linear <- function(X, Y, type = "lm", lambda = 0.5, intercepto = TRUE,
               obs_vs_pred = grafico_observado_vs_predito,
               IC = intervalo_confianca,
               R2 = R2,
-              teste_F = teste_F_resultado))
+              teste_F = teste_F_resultado, intercepto = intercepto))
 }
 
 
@@ -112,8 +126,8 @@ regressao_linear <- function(X, Y, type = "lm", lambda = 0.5, intercepto = TRUE,
 #' Y_pred_novo <- predicao(modelo_lm, X_novo)
 #'
 #' @export
-predicao <- function(modelo, X_novo, intercepto = TRUE) {
-  # Validação das entradas
+predicao <- function(modelo, X_novo) {
+
   if (!is.list(modelo) || !all(c("coeficientes") %in% names(modelo))) {
     stop("O argumento 'modelo' deve ser uma lista resultante da função 'regressao_linear'.")
   }
@@ -123,13 +137,11 @@ predicao <- function(modelo, X_novo, intercepto = TRUE) {
   if (ncol(X_novo) + as.numeric(intercepto) != length(modelo$coeficientes)) {
     stop("O número de colunas em X_novo deve ser compatível com os coeficientes do modelo.")
   }
-  # Adicionar o intercepto se necessário
-  if (intercepto) {
+
+  if (modelo$intercepto) {
     X_novo <- cbind(1, X_novo)
   }
-  # Fazer a predição
   Y_pred_novo <- X_novo %*% modelo$coeficientes
-
   return(as.vector(Y_pred_novo))
 }
 
@@ -151,11 +163,11 @@ predicao <- function(modelo, X_novo, intercepto = TRUE) {
 #'
 #' @return Uma lista de gráficos gerados, contendo:
 #' \itemize{
-#'   \item \code{grafico_residuos_ajustados}: gráfico de resíduos vs. valores ajustados.
+#'   \item \code{grafico_res_ajustados}: gráfico de resíduos vs. valores ajustados.
 #'   \item \code{grafico_histograma_res}: histograma dos resíduos.
 #'   \item \code{grafico_qq_res}: gráfico Q-Q dos resíduos.
 #'   \item \code{grafico_acf_residuos}: gráfico de autocorrelação dos resíduos.
-#'   \item \code{shapiro_wilks}: teste de hipótese do shapiro wilks para testar a normalidade dos resíduos.
+#'   \item \code{shapiro_wilks}: resultado do teste de Shapiro-Wilk para testar a normalidade dos resíduos.
 #' }
 #'
 #' @importFrom ggplot2 ggplot geom_point geom_hline labs theme_bw geom_histogram stat_qq_line geom_bar
@@ -172,47 +184,64 @@ predicao <- function(modelo, X_novo, intercepto = TRUE) {
 #' print(graficos_resultados$grafico_qq_res)
 #' print(graficos_resultados$grafico_acf_residuos)
 #' @export
-analise_residuos <- function(resultados){
-  if (class(resultados) != "list") {
-    stop("X deve ser uma matriz numérica e Y deve ser um vetor numérico.")
+analise_residuos <- function(resultados) {
+  # Verifica se a entrada é uma lista
+  if (!is.list(resultados)) {
+    stop("resultados deve ser uma lista contendo coeficientes, resíduos e valores preditos.")
   }
+
+  # Extrai os componentes da lista
   coeficientes <- resultados$coeficientes
   residuos <- resultados$residuos
   Y_pred <- resultados$valores_preditos
 
   graficos <- list()
-  graficos$grafico_res_ajustados <- ggplot(data = data.frame(Y_pred, residuos), aes(x = Y_pred, y = residuos)) +
-    geom_point() +
-    geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
-    labs(title = "Gráfico de Resíduos vs. Ajustados",
-         x = "Valores Ajustados",
-         y = "Resíduos") + theme_bw()
 
-  graficos$grafico_histograma_res <- ggplot(data = data.frame(residuos), aes(x = residuos)) +
-    geom_histogram(binwidth = 0.5, color = "black") +
-    labs(title = "Histograma dos Resíduos",
-         x = "Resíduos") + theme_bw()
+  # Gráfico de Resíduos vs Valores Ajustados
+  graficos$grafico_res_ajustados <- ggplot2::ggplot(data = data.frame(Y_pred, residuos), aes(x = Y_pred, y = residuos)) +
+    ggplot2::geom_point() +
+    ggplot2::geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+    ggplot2::labs(title = "Gráfico de Resíduos vs. Ajustados",
+                  x = "Valores Ajustados",
+                  y = "Resíduos") +
+    ggplot2::theme_bw()
 
-  graficos$grafico_qq_res <- ggplot(data = data.frame(residuos), aes(sample = residuos)) + stat_qq() +
-    stat_qq_line(color = "red") +
-    labs(title = "Gráfico Q-Q da Normal dos Resíduos") + theme_bw()
+  # Histograma dos Resíduos
+  graficos$grafico_histograma_res <- ggplot2::ggplot(data = data.frame(residuos), aes(x = residuos)) +
+    ggplot2::geom_histogram(binwidth = 0.5, color = "black", fill = "blue") +
+    ggplot2::labs(title = "Histograma dos Resíduos",
+                  x = "Resíduos") +
+    ggplot2::theme_bw()
 
+  # Gráfico Q-Q dos Resíduos
+  graficos$grafico_qq_res <- ggplot2::ggplot(data = data.frame(residuos), aes(sample = residuos)) +
+    ggplot2::stat_qq() +
+    ggplot2::stat_qq_line(color = "red") +
+    ggplot2::labs(title = "Gráfico Q-Q da Normalidade dos Resíduos") +
+    ggplot2::theme_bw()
+
+  # Gráfico de Autocorrelação dos Resíduos
   acf_data <- acf(residuos, plot = FALSE, lag.max = 30)
   acf_df <- data.frame(
     Lag = acf_data$lag[-1],
     ACF = acf_data$acf[-1]
   )
+
   # Calcula os limites de confiança
   n <- length(residuos)
   ci_upper <- 1.96 / sqrt(n)
   ci_lower <- -1.96 / sqrt(n)
 
-  graficos$grafico_acf_residuos <- ggplot(acf_df, aes(x = Lag, y = ACF)) +
-    geom_bar(stat = "identity", fill = "blue", color = "black", width = 0.7) +
-    labs(title = "Autocorrelação dos Resíduos", x = "Lag", y = "Autocorrelação") +
-    geom_hline(yintercept = ci_upper) + geom_hline(yintercept = ci_lower) +
-    theme_bw() +
+  graficos$grafico_acf_residuos <- ggplot2::ggplot(acf_df, aes(x = Lag, y = ACF)) +
+    ggplot2::geom_bar(stat = "identity", fill = "blue", color = "black", width = 0.7) +
+    ggplot2::labs(title = "Autocorrelação dos Resíduos",
+                  x = "Lag",
+                  y = "Autocorrelação") +
+    ggplot2::geom_hline(yintercept = ci_upper, linetype = "dashed", color = "red") +
+    ggplot2::geom_hline(yintercept = ci_lower, linetype = "dashed", color = "red") +
+    ggplot2::theme_bw()
 
+  # Teste de Shapiro-Wilk para normalidade
   graficos$shapiro_wilks <- shapiro.test(residuos)
 
   return(graficos)
