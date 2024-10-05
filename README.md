@@ -26,7 +26,6 @@ Este é um exemplo básico que mostra como resolver um problema comum de ajuste 
 library(regressao)
 # Criar a matriz de preditores e vetor de respostas
 X <- as.matrix(human[, c("idade", "renda_anual", "altura", "anos_exp")])
-X <- cbind(1, X)  # Adiciona uma coluna de 1 para o intercepto
 Y <- human$satisfacao
 
 # Ajustar um modelo de regressão linear
@@ -37,6 +36,11 @@ Você também pode gerar gráficos, como o gráfico "Observado vs Predito":
 
 ```{r}
 print(modelo_lm$obs_vs_pred)
+```
+
+Pode se também realizar o diagnóstico dos resíduos apenas utilizando a função **`analise_residuos()`**
+```{r}
+analise_residuos(modelo_lm)
 ```
 
 O pacote inclui um conjunto de dados simulado chamado human, que contém informações sobre indivíduos, incluindo idade, renda anual, ocupação, sexo, altura, anos de experiência e satisfação.
