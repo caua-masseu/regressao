@@ -3,10 +3,10 @@ Type: Package
 Title: Ferramentas para Ajuste de Modelos de Regressão Linear e Ridge
 Version: 0.1.0
 Authors@R: 
-    person("Cauã", "Masseu", email = "c204238@dac.unicamp.br", role = c("aut", "cre")),
-    person("Marcos", "Moribe", role = "aut"),
-    person("Rodrigo", "Gomes", role = "aut"),
-    person("Victor", "Poggetti", role = "aut")
+    c(person("Cauã", "Masseu", email = "c204238@dac.unicamp.br", role = c("aut", "cre")),
+    person("Marcos", "Moribe", email = "m236225@dac.unicamp.br", role = "aut"),
+    person("Rodrigo", "Gomes", email = "r186777@dac.unicamp.br", role = "aut"),
+    person("Victor", "Poggetti",  email = "v204384@dac.unicamp.br", role = "aut"))
 Maintainer: Cauã Masseu <c204238@dac.unicamp.br>
 Description: O pacote 'regressao' facilita o ajuste de modelos de regressão linear simples 
     e ridge, e oferece ferramentas para análise estatística dos resíduos dos modelos. 
