@@ -42,23 +42,17 @@
 #' @export
 regressao_linear <- function(X, Y, type = "lm", lambda = 0.5, intercepto = TRUE, nivel_confianca = 0.95) {
 
-  if (!is.matrix(X) || !is.numeric(X) || !is.numeric(Y)) {
-    stop("X deve ser uma matriz numérica e Y deve ser um vetor numérico.")
+  if (!is.matrix(X) || !is.numeric(X) || !is.numeric(Y) || !is.vector(Y) || length(dim(Y)) > 1) {
+    stop("X deve ser uma matriz numérica e Y deve ser um vetor unidimensional numérico.")
   }
   if (nrow(X) != length(Y)) {
     stop("O número de linhas em X deve ser igual ao comprimento de Y.")
   }
-  if (!is.vector(Y) || length(dim(Y)) > 1) {
-    stop("Y deve ser um vetor unidimensional.")
-  }
-  if (nrow(X) == 0 || ncol(X) == 0) {
-    stop("X não pode ser vazio.")
+  if (nrow(X) == 0 || ncol(X) == 0 || ncol(X) < 1) {
+    stop("X deve ter pelo menos uma coluna de preditores e não pode ser vazio.")
   }
   if (any(is.na(X)) || any(is.na(Y))) {
     stop("X e Y não podem conter valores NA.")
-  }
-  if (ncol(X) < 1) {
-    stop("X deve ter pelo menos uma coluna de preditores.")
   }
   if(qr(X)$rank < ncol(X)) {
     stop("A matriz X não possui posto completo (Não existe uma solução unica para os coeficientes do modelo).")

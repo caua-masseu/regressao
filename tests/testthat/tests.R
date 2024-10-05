@@ -13,6 +13,9 @@ test_that("Função falha com dados inválidos", {
   expect_error(regressao_linear(matrix(1:6, nrow = 3), Y = c(1, 2)),
                "O número de linhas em X deve ser igual ao comprimento de Y.", fixed = TRUE)
 
+  expect_error(regressao_linear(X = NULL, Y = c(1, 2)),
+               "X deve ser uma matriz numérica e Y deve ser um vetor unidimensional numérico.", fixed = TRUE)
+
   # Teste: matriz sem posto completo
   matriz_incompleta <- matrix(c(1, 2, 3, 2, 4, 6), nrow = 3)
   expect_error(regressao_linear(matriz_incompleta, Y = c(5, 6, 5)))
@@ -99,12 +102,4 @@ test_that("analise_residuos falha com entrada inválida", {
                "O argumento 'modelo' deve ser uma lista resultante da função 'regressao_linear'.", fixed = TRUE)
 })
 
-# n <- 100
-# dados <- data.frame(idade = sample(18:65, n, replace = TRUE),
-#                     renda_anual = round(rgamma(n, scale = 1200, shape = 12), 3),
-#                     ocupacao = sample(c("Empregado", "Desempregado", "Autônomo"), n, replace = TRUE),
-#                     sexo = sample(c("Homem", "Mulher"), n, replace = TRUE),
-#                     altura = round(rnorm(n, mean = 173, sd = 6), 3),
-#                     anos_exp = sample(18:35, n, replace = TRUE) - sample(0:18, n, replace = TRUE),
-#                     satisfacao =  sample(seq(0, 10, by = 0.1), n, replace = TRUE))
 

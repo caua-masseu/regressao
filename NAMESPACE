@@ -3,6 +3,7 @@
 export(analise_residuos)
 export(predicao)
 export(regressao_linear)
+importFrom(ggplot2,aes)
 importFrom(ggplot2,geom_bar)
 importFrom(ggplot2,geom_histogram)
 importFrom(ggplot2,geom_hline)

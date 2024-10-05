@@ -4,10 +4,10 @@
 \alias{analise_residuos}
 \title{Análise de Resíduos de um Modelo de Regressão}
 \usage{
-analise_residuos(resultados)
+analise_residuos(modelo)
 }
 \arguments{
-\item{resultados}{Uma lista contendo os resultados do ajuste do modelo.
+\item{modelo}{Uma lista contendo os resultados do ajuste do modelo.
 Deve incluir:
 \itemize{
   \item \code{coeficientes}: vetor de coeficientes do modelo.
@@ -36,11 +36,11 @@ dos resíduos.
 resultado <- regressao_linear(X, Y)
 
 # Analisar os resíduos
-graficos_resultados <- analise_residuos(resultado)
+graficos_modelo <- analise_residuos(resultado)
 
 # Exibir gráficos dos resíduos
-print(graficos_resultados$grafico_res_ajustados)
-print(graficos_resultados$grafico_histograma_res)
-print(graficos_resultados$grafico_qq_res)
-print(graficos_resultados$grafico_acf_residuos)
+print(graficos_modelo$grafico_res_ajustados)
+print(graficos_modelo$grafico_histograma_res)
+print(graficos_modelo$grafico_qq_res)
+print(graficos_modelo$grafico_acf_residuos)
 }
