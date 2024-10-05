@@ -16,7 +16,7 @@ devtools::install_github("caua-masseu/regressao")
 
 - **`regressao_linear()`**: Ajusta um modelo de regressão linear simples ou ridge. Retorna os coeficientes, resíduos, valores preditos e um gráfico de valores observados vs. preditos.
 - **`analise_residuos()`**: Gera gráficos para análise dos resíduos de um modelo de regressão.
--**`predicao()`**: Faz previsões utilizando um modelo de regressão previamente ajustado.
+- **`predicao()`**: Faz previsões utilizando um modelo de regressão previamente ajustado.
 
 ## Exemplos
 
