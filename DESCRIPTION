@@ -2,14 +2,22 @@ Package: regressao
 Type: Package
 Title: Ferramentas para Ajuste de Modelos de Regressão Linear e Ridge
 Version: 0.1.0
+Authors@R: 
+    person("Cauã", "Masseu", email = "c204238@dac.unicamp.br", role = c("aut", "cre")),
+    person("Marcos", "Moribe", role = "aut"),
+    person("Rodrigo", "Gomes", role = "aut"),
+    person("Victor", "Poggetti", role = "aut")
 Maintainer: Cauã Masseu <c204238@dac.unicamp.br>
 Description: O pacote 'regressao' facilita o ajuste de modelos de regressão linear simples 
     e ridge, e oferece ferramentas para análise estatística dos resíduos dos modelos. 
     Ele inclui funções para ajuste de modelos, geração de predições, e análise da qualidade 
     do ajuste com gráficos de resíduos. Um conjunto de dados simulado é fornecido para testes.
-License: MIT
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Depends: R (>= 3.5.0)
 Imports: stats, graphics, ggplot2 (>= 3.5.1)
+Suggests: testthat, knitr
 RoxygenNote: 7.3.2
+URL: https://github.com/caua-masseu/regressao
+BugReports: https://github.com/caua-masseu/regressao/issues
